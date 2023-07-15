@@ -25,7 +25,17 @@ const client = new MongoClient(uri, {
 
 const run = async () => {
   try {
-    const db = client.db("tech-net");
+    const db = client.db("eBookDesk");
+
+    const bookCollection = db.collection("book");
+
+    app.post("/addbook", async (req, res) => {
+      const book = req.body;
+      console.log(book);
+
+      const result = await bookCollection.insertOne(book);
+      res.send(result);
+    });
   } finally {
   }
 };
