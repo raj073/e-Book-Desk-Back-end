@@ -36,6 +36,13 @@ const run = async () => {
       const result = await bookCollection.insertOne(book);
       res.send(result);
     });
+
+    app.get("/books", async (req, res) => {
+      const cursor = bookCollection.find({});
+      const book = await cursor.toArray();
+      res.send({ data: book });
+      console.log(book);
+    });
   } finally {
   }
 };
