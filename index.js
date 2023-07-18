@@ -43,6 +43,45 @@ const run = async () => {
       res.send({ data: book });
       console.log(book);
     });
+
+    app.get("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await bookCollection.findOne({ _id: new ObjectId(id) });
+      res.send(result);
+    });
+
+    app.put("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedData = req.body;
+
+      console.log(id);
+      console.log(updatedData);
+
+      const result = await bookCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updatedData }
+      );
+
+      console.log(result);
+
+      if (result.modifiedCount !== 1) {
+        console.error("Book not found or Book not added");
+        res.json({ error: "Book not found or Book not added" });
+        return;
+      }
+
+      console.log("Book Updated successfully");
+      res.json({ message: "Book Updated successfully" });
+    });
+
+    app.delete("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+
+      const result = await bookCollection.deleteOne({ _id: new ObjectId(id) });
+      console.log(result);
+      res.send(result);
+    });
   } finally {
   }
 };
