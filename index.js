@@ -31,7 +31,6 @@ const run = async () => {
 
     app.post("/addbook", async (req, res) => {
       const book = req.body;
-      console.log(book);
 
       const result = await bookCollection.insertOne(book);
       res.send(result);
@@ -41,7 +40,6 @@ const run = async () => {
       const cursor = bookCollection.find({});
       const book = await cursor.toArray();
       res.send({ data: book });
-      console.log(book);
     });
 
     app.get("/book/:id", async (req, res) => {
@@ -54,15 +52,10 @@ const run = async () => {
       const id = req.params.id;
       const updatedData = req.body;
 
-      console.log(id);
-      console.log(updatedData);
-
       const result = await bookCollection.updateOne(
         { _id: new ObjectId(id) },
         { $set: updatedData }
       );
-
-      console.log(result);
 
       if (result.modifiedCount !== 1) {
         console.error("Book not found or Book not added");
@@ -76,7 +69,6 @@ const run = async () => {
 
     app.delete("/book/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
 
       const result = await bookCollection.deleteOne({ _id: new ObjectId(id) });
       console.log(result);
@@ -87,15 +79,10 @@ const run = async () => {
       const bookId = req.params.id;
       const { review, reviewedBy } = req.body;
 
-      console.log(bookId);
-      console.log(review, reviewedBy);
-
       const result = await bookCollection.updateOne(
         { _id: new ObjectId(bookId) },
         { $push: { reviews: review, reviewedBy: reviewedBy } }
       );
-
-      console.log(result);
 
       if (result.modifiedCount !== 1) {
         console.error("Review not Found or Review Not Added");
@@ -105,6 +92,23 @@ const run = async () => {
 
       console.log("Review added successfully");
       res.json({ message: "Review added successfully" });
+    });
+
+    app.get("/review/:id", async (req, res) => {
+      const bookId = req.params.id;
+
+      const result = await bookCollection.findOne(
+        {
+          _id: new ObjectId(bookId),
+        },
+        { projection: { _id: 0, reviews: 1 } }
+      );
+
+      if (result) {
+        res.json(result);
+      } else {
+        res.status(404).json({ error: "Book Not Found" });
+      }
     });
   } finally {
   }
