@@ -110,6 +110,20 @@ const run = async () => {
         res.status(404).json({ error: "Book Not Found" });
       }
     });
+
+    app.put("/wishlist/:id", async (req, res) => {
+      const bookId = req.params.id;
+      const { bookStatus } = req.body;
+
+      console.log(bookId, bookStatus);
+
+      const result = await bookCollection.updateOne(
+        { _id: new ObjectId(bookId) },
+        { $set: { bookStatus: bookStatus } }
+      );
+
+      res.send(result);
+    });
   } finally {
   }
 };
