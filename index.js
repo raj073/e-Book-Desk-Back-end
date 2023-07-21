@@ -124,6 +124,58 @@ const run = async () => {
 
       res.send(result);
     });
+
+    app.get("/wishlist", async (req, res) => {
+      const cursor = bookCollection.find({ bookStatus: "Wishlist" });
+      const wishlistBook = await cursor.toArray();
+      console.log(cursor);
+      res.send({ data: wishlistBook });
+    });
+
+    app.put("/reading/:id", async (req, res) => {
+      const bookId = req.params.id;
+      const { bookStatus } = req.body;
+
+      const result = await bookCollection.updateOne(
+        { _id: new ObjectId(bookId) },
+        { $set: { bookStatus: bookStatus } }
+      );
+
+      res.send(result);
+    });
+
+    app.put("/plantoreadsoon/:id", async (req, res) => {
+      const bookId = req.params.id;
+      const { bookStatus } = req.body;
+
+      const result = await bookCollection.updateOne(
+        { _id: new ObjectId(bookId) },
+        { $set: { bookStatus: bookStatus } }
+      );
+
+      res.send(result);
+    });
+
+    app.get("/bookstatus", async (req, res) => {
+      const bookStatusArray = ["Currently Reading", "Plan To Read Soon"];
+      const cursor = bookCollection.find({
+        bookStatus: { $in: bookStatusArray },
+      });
+      const bookStatus = await cursor.toArray();
+      res.send({ data: bookStatus });
+    });
+
+    app.put("/finished-reading/:id", async (req, res) => {
+      const bookId = req.params.id;
+      const { isFinishedReading } = req.body;
+
+      const result = await bookCollection.updateOne(
+        { _id: new ObjectId(bookId) },
+        { $set: { isFinishedReading: isFinishedReading } }
+      );
+
+      res.send(result);
+    });
   } finally {
   }
 };
